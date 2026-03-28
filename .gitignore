@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+# pnpm content-addressed store (never commit; use default global store, not project-local)
+**/.pnpm-store/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Environment (keep .env.example)
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Test / coverage
+coverage/
+.nyc_output/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.vscode/*
+!.vscode/extensions.json
+
+# Docker (optional local overrides)
+docker-compose.override.yml
+
+# Misc
+.temp/
+.tmp/
+*.local

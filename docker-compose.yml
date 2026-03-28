@@ -1,0 +1,72 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-goodjob}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-goodjob}
+      POSTGRES_DB: ${POSTGRES_DB:-goodjob}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U goodjob -d goodjob"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "${BACKEND_PORT:-7770}:7770"
+    environment:
+      NODE_ENV: development
+      CI: "true"
+      PORT: 7770
+      DATABASE_URL: ${DATABASE_URL:-postgresql://goodjob:goodjob@postgres:5432/goodjob}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - ./backend:/app
+      - backend_node_modules:/app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "${FRONTEND_PORT:-7777}:7777"
+    environment:
+      NODE_ENV: development
+      CI: "true"
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:7770}
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  backend_node_modules:
+  frontend_node_modules:

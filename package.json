@@ -1,0 +1,28 @@
+{
+  "name": "goodjob",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Internal recognition & rewards – root scripts for frontend + backend",
+  "scripts": {
+    "dev": "concurrently -n web,api -c cyan,magenta \"pnpm -C frontend dev\" \"pnpm -C backend start:dev\"",
+    "dev:web": "pnpm -C frontend dev",
+    "dev:api": "pnpm -C backend start:dev",
+    "build": "pnpm -C frontend build && pnpm -C backend build",
+    "build:web": "pnpm -C frontend build",
+    "build:api": "pnpm -C backend build",
+    "lint": "pnpm -C frontend lint && pnpm -C backend lint",
+    "lint:web": "pnpm -C frontend lint",
+    "lint:api": "pnpm -C backend lint",
+    "test": "pnpm -C backend test",
+    "test:e2e": "pnpm -C backend test:e2e",
+    "preview:web": "pnpm -C frontend preview",
+    "docker:up": "docker compose up",
+    "docker:up:build": "docker compose up --build",
+    "docker:down": "docker compose down",
+    "docker:build": "docker compose build",
+    "install:all": "pnpm install && pnpm -C frontend install && pnpm -C backend install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
