@@ -6,11 +6,11 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-goodjob}
       POSTGRES_DB: ${POSTGRES_DB:-goodjob}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - '${POSTGRES_PORT:-5432}:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U goodjob -d goodjob"]
+      test: ['CMD-SHELL', 'pg_isready -U goodjob -d goodjob']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -18,55 +18,87 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - '${REDIS_PORT:-6379}:6379'
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 3s
       retries: 5
 
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    ports:
+      - '${MINIO_API_PORT:-9000}:9000'
+      - '${MINIO_CONSOLE_PORT:-9001}:9001'
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
       target: development
     ports:
-      - "${BACKEND_PORT:-7770}:7770"
+      - '${BACKEND_PORT:-7770}:7770'
     environment:
       NODE_ENV: development
-      CI: "true"
+      CI: 'true'
       PORT: 7770
       DATABASE_URL: ${DATABASE_URL:-postgresql://goodjob:goodjob@postgres:5432/goodjob}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
-      CHOKIDAR_USEPOLLING: "true"
+      JWT_SECRET: ${JWT_SECRET:-dev-jwt-secret-change-me-min-32-characters-long}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev-refresh-secret-change-me-min-32-chars}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:7777}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-http://localhost:7770/auth/google/callback}
+      TYPEORM_MIGRATIONS_RUN: ${TYPEORM_MIGRATIONS_RUN:-false}
+      CHOKIDAR_USEPOLLING: 'true'
+      S3_ENDPOINT: ${S3_ENDPOINT:-http://minio:9000}
+      S3_PUBLIC_BASE_URL: ${S3_PUBLIC_BASE_URL:-http://localhost:9000}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-minioadmin}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-minioadmin}
+      S3_BUCKET: ${S3_BUCKET:-avatars}
     volumes:
-      - ./backend:/app
+      - .:/app
       - backend_node_modules:/app/node_modules
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+      minio:
+        condition: service_healthy
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: frontend/Dockerfile
       target: development
     ports:
-      - "${FRONTEND_PORT:-7777}:7777"
+      - '${FRONTEND_PORT:-7777}:7777'
     environment:
       NODE_ENV: development
-      CI: "true"
+      CI: 'true'
       VITE_API_URL: ${VITE_API_URL:-http://localhost:7770}
-      CHOKIDAR_USEPOLLING: "true"
+      CHOKIDAR_USEPOLLING: 'true'
     volumes:
-      - ./frontend:/app
+      - .:/app
       - frontend_node_modules:/app/node_modules
     depends_on:
       - backend
 
 volumes:
   pgdata:
+  minio_data:
   backend_node_modules:
   frontend_node_modules:
