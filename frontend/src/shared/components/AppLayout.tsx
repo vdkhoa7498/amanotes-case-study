@@ -58,8 +58,15 @@ export function AppLayout() {
   const canSendKudo = (points?.monthlyGivingRemaining ?? 0) > 0
 
   return (
-    <AntLayout className="min-h-screen !bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100">
-      <Header className="!h-auto !border-b !border-slate-800/80 !bg-slate-950/85 !px-4 !py-3 !leading-normal backdrop-blur-sm">
+    <AntLayout className="relative min-h-screen overflow-x-hidden !bg-gradient-to-br from-slate-950 via-indigo-950/30 to-slate-950 text-slate-100">
+      {/* Glassmorphism background orbs */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
+        <div className="absolute -top-48 -left-48 h-[500px] w-[500px] rounded-full bg-violet-700/20 blur-[140px]" />
+        <div className="absolute top-1/3 -right-32 h-96 w-96 rounded-full bg-indigo-600/15 blur-[120px]" />
+        <div className="absolute bottom-0 left-1/4 h-80 w-80 rounded-full bg-purple-700/15 blur-[100px]" />
+      </div>
+
+      <Header className="!h-auto !border-b !border-white/[0.08] !bg-white/[0.04] !px-4 !py-3 !leading-normal backdrop-blur-2xl" style={{ position: 'sticky', top: 0, zIndex: 100 }}>
         <Flex
           align="center"
           justify="space-between"
@@ -69,7 +76,7 @@ export function AppLayout() {
         >
           <Flex align="center" gap={20} wrap="wrap" flex={1}>
             <Link to="/">
-              <Typography.Title level={4} className="!mb-0 !text-violet-400">
+              <Typography.Title level={4} className="!mb-0 !text-violet-400 drop-shadow-[0_0_10px_rgba(167,139,250,0.5)]">
                 {APP_BRAND_NAME}
               </Typography.Title>
             </Link>

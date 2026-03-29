@@ -90,7 +90,7 @@ export function KudosSearchModal() {
   const [input, setInput] = useState('')
   const [query, setQuery] = useState('')
 
-  const { data, isPending, isError } = useQuery({
+  const { data, isFetching, isError } = useQuery({
     queryKey: queryKeys.kudos.aiSearch(query),
     queryFn: () => searchKudosSemantic(query),
     enabled: query.length >= 2,
@@ -139,7 +139,7 @@ export function KudosSearchModal() {
             <Button
               type="primary"
               size="large"
-              loading={isPending}
+              loading={isFetching}
               disabled={input.trim().length < 2}
               onClick={handleSearch}
             >
@@ -160,7 +160,7 @@ export function KudosSearchModal() {
             </Typography.Text>
           )}
 
-          {!isPending && data && data.length === 0 && query && (
+          {!isFetching && data && data.length === 0 && query && (
             <Typography.Text
               type="secondary"
               style={{
