@@ -70,7 +70,7 @@ jobs:
             cd ${{ secrets.DEPLOY_PATH }}
 
             echo "→ Pulling latest code..."
-            git pull origin master
+            GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no" git pull origin master
 
             echo "→ Building production images..."
             docker compose -f docker-compose.prod.yml build --no-cache
