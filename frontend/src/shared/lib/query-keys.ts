@@ -9,6 +9,8 @@ export const queryKeys = {
     coreValues: ['kudos', 'core-values'] as const,
     feed: (scope: 'me' | 'all') => ['kudos', 'feed', scope] as const,
     rankingMonthly: ['kudos', 'ranking', 'monthly'] as const,
+    aiSummary: ['kudos', 'ai-summary'] as const,
+    aiSearch: (q: string) => ['kudos', 'ai-search', q] as const,
     detail: (kudoId: string) => ['kudos', 'detail', kudoId] as const,
   },
   rewards: {

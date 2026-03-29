@@ -144,6 +144,7 @@ export class AuthController {
           : String(u.dateOfBirth).slice(0, 10)
         : null,
       avatar: u.avatar,
+      role: u.role,
     };
   }
 }

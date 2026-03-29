@@ -201,7 +201,7 @@ export function KudoDetailPage() {
       quillRef.current = null
       host.innerHTML = ''
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, q.data?.id, kudoId, processFiles])
 
   const data = q.data
@@ -248,10 +248,7 @@ export function KudoDetailPage() {
                       {dayjs(data.createdAt).fromNow()}
                     </Typography.Text>
                     <Flex wrap gap={8} align="center" className="mt-1">
-                      <Tag color="purple">{data.coreValue.name}</Tag>
-                      <Typography.Text type="secondary" className="text-xs">
-                        {data.coreValue.slug}
-                      </Typography.Text>
+                      <Tag color="purple">#{data.coreValue.name}</Tag>
                       {data.status !== 'ready' ? (
                         <Tag bordered={false}>{data.status}</Tag>
                       ) : null}

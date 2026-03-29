@@ -4,10 +4,11 @@ import {
   Button,
   Card,
   Divider,
+  Empty,
   Flex,
   Radio,
+  Skeleton,
   Space,
-  Spin,
   Tag,
   Typography,
 } from 'antd'
@@ -265,9 +266,13 @@ export function KudoFeedSection({
       </Flex>
 
       {isPending ? (
-        <Flex justify="center" style={{ padding: 48 }}>
-          <Spin />
-        </Flex>
+        <>
+          {[0, 1, 2].map((i) => (
+            <Card key={i}>
+              <Skeleton avatar active paragraph={{ rows: 3 }} />
+            </Card>
+          ))}
+        </>
       ) : null}
 
       {isError ? (
@@ -277,11 +282,11 @@ export function KudoFeedSection({
       ) : null}
 
       {!isPending && !isError && items.length === 0 ? (
-        <Card>
-          <Typography.Text type="secondary">
-            Chưa có kudo nào trong bảng tin.
-          </Typography.Text>
-        </Card>
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description="Chưa có kudo nào trong bảng tin."
+          style={{ padding: '48px 0' }}
+        />
       ) : null}
 
       {!isPending && !isError

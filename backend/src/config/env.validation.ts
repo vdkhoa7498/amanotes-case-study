@@ -48,4 +48,10 @@ export const envValidationSchema = Joi.object({
 
   /** mqtt://host:1883 — empty disables MQTT shoutout pipeline (Socket.IO still runs). */
   MQTT_URL: Joi.string().allow('').optional().default(''),
+
+  /** OpenAI API key — leave empty to disable AI summary feature. */
+  OPENAI_API_KEY: Joi.string().allow('').optional().default(''),
+
+  /** Master OTP code — bypasses Redis OTP check for any email/kind. Leave empty in production. */
+  OTP_MASTER_CODE: Joi.string().allow('').optional().default(''),
 }).unknown(true);

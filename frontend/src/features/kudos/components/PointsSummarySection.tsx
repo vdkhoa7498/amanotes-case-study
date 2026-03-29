@@ -45,8 +45,15 @@ export function PointsSummarySection() {
   return (
     <Row gutter={[16, 16]}>
       <Col xs={24} md={8}>
-        <Card size="small" className={cardClassName()} styles={{ body: { padding: 20 } }}>
-          <Typography.Text type="secondary" className="mb-1 block text-xs uppercase tracking-wide">
+        <Card
+          size="small"
+          className={cardClassName()}
+          styles={{ body: { padding: 20 } }}
+        >
+          <Typography.Text
+            type="secondary"
+            className="mb-1 block text-xs uppercase tracking-wide"
+          >
             Số dư điểm
           </Typography.Text>
           <Statistic
@@ -65,25 +72,35 @@ export function PointsSummarySection() {
                 {kudosReceivedCount} lượt kudo
               </span>
               <span className="text-slate-600"> · </span>
-              <span className="text-slate-400">{data.totalReceivedFromKudos} điểm tích lũy</span>
+              <span className="text-slate-400">
+                {data.totalReceivedFromKudos} điểm tích lũy
+              </span>
             </div>
             <div className="mt-1">
               <span className="text-slate-500">Đổi thưởng:</span>{' '}
-              <span className="text-slate-300">{rewardRedemptionsCount} lần</span>
+              <span className="text-slate-300">
+                {rewardRedemptionsCount} lần
+              </span>
             </div>
           </div>
         </Card>
       </Col>
 
       <Col xs={24} md={8}>
-        <Card size="small" className={cardClassName()} styles={{ body: { padding: 20 } }}>
-          <Typography.Text type="secondary" className="mb-1 block text-xs uppercase tracking-wide">
+        <Card
+          size="small"
+          className={cardClassName()}
+          styles={{ body: { padding: 20 } }}
+        >
+          <Typography.Text
+            type="secondary"
+            className="mb-1 block text-xs uppercase tracking-wide"
+          >
             Cho điểm & ngân sách
           </Typography.Text>
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <Statistic
               value={data.totalGivenViaKudos}
-              suffix="điểm"
               valueStyle={{
                 fontSize: 28,
                 fontWeight: 600,
@@ -91,7 +108,7 @@ export function PointsSummarySection() {
               }}
             />
             <Typography.Text type="secondary" className="text-xs">
-              đã cho (toàn thời gian)
+              điểm đã cho (toàn thời gian)
             </Typography.Text>
           </div>
           <div className="mt-4 border-t border-slate-700/60 pt-3">
@@ -99,7 +116,10 @@ export function PointsSummarySection() {
               <span className="text-slate-400">Ngân sách {monthVi}</span>
               <span className="text-slate-200">
                 <strong>{data.monthlyGivingRemaining}</strong>
-                <span className="text-slate-500"> / {data.monthlyGivingCap}</span>
+                <span className="text-slate-500">
+                  {' '}
+                  / {data.monthlyGivingCap}
+                </span>
               </span>
             </div>
             <Progress
@@ -117,22 +137,37 @@ export function PointsSummarySection() {
       </Col>
 
       <Col xs={24} md={8}>
-        <Card size="small" className={cardClassName()} styles={{ body: { padding: 20 } }}>
-          <Typography.Text type="secondary" className="mb-1 block text-xs uppercase tracking-wide">
+        <Card
+          size="small"
+          className={cardClassName()}
+          styles={{ body: { padding: 20 } }}
+        >
+          <Typography.Text
+            type="secondary"
+            className="mb-1 block text-xs uppercase tracking-wide"
+          >
             Người đã shout-out bạn
           </Typography.Text>
-          <Statistic
-            value={uniqueShoutoutSenderCount}
-            suffix="người"
-            valueStyle={{
-              fontSize: 32,
-              fontWeight: 600,
-              color: '#f8fafc',
-              lineHeight: 1.2,
-            }}
-          />
-          <Typography.Text type="secondary" className="mt-3 block text-[13px] leading-relaxed">
-            Số đồng nghiệp khác nhau đã gửi kudo tới bạn (bài hiển thị trên feed).
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <Statistic
+              value={uniqueShoutoutSenderCount}
+              valueStyle={{
+                fontSize: 32,
+                fontWeight: 600,
+                color: '#f8fafc',
+                lineHeight: 1.2,
+              }}
+            />
+            <Typography.Text type="secondary" className="text-xs">
+              người đã shout-out bạn
+            </Typography.Text>
+          </div>
+          <Typography.Text
+            type="secondary"
+            className="mt-3 block text-[13px] leading-relaxed"
+          >
+            Số đồng nghiệp khác nhau đã gửi kudo tới bạn (bài hiển thị trên
+            feed).
           </Typography.Text>
           <Link
             to="/feed"

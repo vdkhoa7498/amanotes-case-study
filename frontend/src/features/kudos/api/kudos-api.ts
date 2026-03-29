@@ -92,3 +92,28 @@ export function uploadCommentMedia(file: File) {
   fd.append('file', file)
   return apiClient.post<{ url: string; key: string }>('/uploads/comment-media', fd)
 }
+
+export interface AiSummaryResult {
+  summary: string
+  monthKey: string
+  kudosCount: number
+  totalPointsReceived: number
+}
+
+export function fetchAiSummary() {
+  return apiClient.get<AiSummaryResult>('/kudos/ai-summary')
+}
+
+export interface KudoSearchHit {
+  kudoId: string
+  score: number
+  description: string
+  senderName: string
+  coreValueName: string
+  createdAt: string
+  recipients: Array<{ userId: string; name: string; points: number }>
+}
+
+export function searchKudosSemantic(q: string) {
+  return apiClient.get<KudoSearchHit[]>('/kudos/ai-search', { params: { q } })
+}

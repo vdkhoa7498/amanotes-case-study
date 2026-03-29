@@ -4,6 +4,7 @@ import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'node:path';
+import { AdminModule } from './admin/admin.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
@@ -51,6 +52,7 @@ import { UsersModule } from './users/users.module';
     KudosModule,
     AuthModule,
     UploadsModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [

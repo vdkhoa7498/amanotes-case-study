@@ -9,7 +9,9 @@ import {
   Query,
   Req,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
+import { AiService } from '../ai/ai.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { User } from '../users/entities/user.entity';
 import { AddCommentDto } from './dto/add-comment.dto';
@@ -22,11 +24,25 @@ import { KudosService } from './kudos.service';
 @Controller('kudos')
 @UseGuards(JwtAuthGuard)
 export class KudosController {
-  constructor(private readonly kudos: KudosService) {}
+  constructor(
+    private readonly kudos: KudosService,
+    private readonly ai: AiService,
+  ) {}
 
   @Post()
   create(@Req() req: { user: User }, @Body() dto: CreateKudoDto) {
     return this.kudos.createKudo(req.user, dto);
+  }
+
+  @Get('ai-summary')
+  aiSummary(@Req() req: { user: User }) {
+    return this.ai.generateMonthlySummary(req.user.id);
+  }
+
+  @Get('ai-search')
+  aiSearch(@Query('q') q: string) {
+    if (!q?.trim()) throw new BadRequestException('Query param "q" is required');
+    return this.ai.searchKudos(q.trim());
   }
 
   @Get('ranking/monthly')

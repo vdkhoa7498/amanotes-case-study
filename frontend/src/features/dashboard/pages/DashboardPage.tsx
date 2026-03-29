@@ -7,7 +7,9 @@ import {
   fetchMonthlyRanking,
   type MonthlyRankingEntry,
 } from '../../kudos/api/kudos-api'
+import { AiSummaryModal } from '../../kudos/components/AiSummaryModal'
 import { PointsSummarySection } from '../../kudos/components/PointsSummarySection'
+import { useAuth } from '../../auth'
 
 const MEDALS = [
   { rank: 1 as const, emoji: '🥇', label: 'Hạng 1' },
@@ -22,6 +24,8 @@ function userInitial(e: MonthlyRankingEntry['user']): string {
 }
 
 export function DashboardPage() {
+  const { user } = useAuth()
+
   const { data, isPending, isError, error } = useQuery({
     queryKey: queryKeys.kudos.rankingMonthly,
     queryFn: fetchMonthlyRanking,
@@ -32,11 +36,14 @@ export function DashboardPage() {
 
   return (
     <Flex vertical gap={24} style={{ width: '100%' }}>
-      <Typography.Title level={2} style={{ margin: 0 }}>
-        Dashboard
-      </Typography.Title>
+      <Flex align="center" justify="space-between" wrap="wrap" gap={12}>
+        <Typography.Title level={2} style={{ margin: 0 }}>
+          Dashboard
+        </Typography.Title>
+        {user?.role !== 'admin' ? <AiSummaryModal /> : null}
+      </Flex>
 
-      <PointsSummarySection />
+      {user?.role !== 'admin' ? <PointsSummarySection /> : null}
 
       <Flex
         vertical

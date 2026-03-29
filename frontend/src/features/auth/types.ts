@@ -9,4 +9,5 @@ export type AuthUser = {
   gender: string | null
   dateOfBirth: string | null
   avatar: string | null
+  role: 'admin' | 'staff'
 }

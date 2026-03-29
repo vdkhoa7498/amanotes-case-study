@@ -3,6 +3,7 @@ import {
   App,
   Button,
   Card,
+  Empty,
   Flex,
   Image,
   List,
@@ -70,6 +71,13 @@ export function RewardsPage() {
         <Typography.Text type="danger">
           {error instanceof Error ? error.message : 'Không tải được danh mục.'}
         </Typography.Text>
+      ) : null}
+      {!isPending && !isError && catalog.length === 0 ? (
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description="Chưa có phần thưởng nào trong danh mục."
+          style={{ padding: '48px 0' }}
+        />
       ) : null}
 
       <List

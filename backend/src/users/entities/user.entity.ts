@@ -13,6 +13,11 @@ export enum UserGender {
   OTHER = 'other',
 }
 
+export enum UserRole {
+  ADMIN = 'admin',
+  STAFF = 'staff',
+}
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -49,6 +54,9 @@ export class User {
 
   @Column({ type: 'varchar', length: 2048, nullable: true })
   avatar: string | null;
+
+  @Column({ type: 'varchar', length: 16, default: UserRole.STAFF })
+  role: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

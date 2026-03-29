@@ -19,7 +19,10 @@ const refreshClient = axios.create({
 const rawApiClient = axios.create({
   baseURL: API_BASE,
   withCredentials: true,
-  headers: { 'Content-Type': 'application/json' },
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest',
+  },
 })
 
 export type ApiClient = Omit<

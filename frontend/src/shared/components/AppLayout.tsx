@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { AppErrorBoundary } from './AppErrorBoundary'
 import {
   Avatar,
   Button,
@@ -13,6 +14,7 @@ import { Link, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth, type AuthUser } from '../../features/auth'
 import { fetchPointsSummary } from '../../features/kudos/api/kudos-api'
 import { CreateKudoModal } from '../../features/kudos/components/CreateKudoModal'
+import { KudosSearchModal } from '../../features/kudos/components/KudosSearchModal'
 import { APP_BRAND_NAME } from '../constants/app'
 import { queryKeys } from '../lib/query-keys'
 import { NotificationBell } from './NotificationBell'
@@ -88,11 +90,15 @@ export function AppLayout() {
                   key: 'rewards',
                   label: <Link to="/rewards">Reward Redemption</Link>,
                 },
+                ...(user.role === 'admin'
+                  ? [{ key: 'admin', label: <Link to="/admin">⚙️ Admin</Link> }]
+                  : []),
               ]}
             />
           </Flex>
 
           <Flex align="center" gap={12} wrap="wrap">
+            <KudosSearchModal />
             <Button
               type="primary"
               disabled={!canSendKudo}
@@ -136,7 +142,9 @@ export function AppLayout() {
         </Flex>
       </Header>
       <Content className="mx-auto w-full max-w-5xl px-4 py-10">
-        <Outlet />
+        <AppErrorBoundary>
+          <Outlet />
+        </AppErrorBoundary>
       </Content>
 
       <CreateKudoModal open={createOpen} onClose={() => setCreateOpen(false)} />

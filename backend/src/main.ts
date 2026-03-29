@@ -20,6 +20,7 @@ async function bootstrap() {
   app.enableCors({
     origin: config.get<string>('FRONTEND_URL') ?? 'http://localhost:7777',
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   });
   await app.listen(process.env.PORT ?? 7770);
 }

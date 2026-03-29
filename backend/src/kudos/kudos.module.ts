@@ -13,6 +13,7 @@ import { Mention } from './entities/mention.entity';
 import { Notification } from './entities/notification.entity';
 import { PointLedger } from './entities/point-ledger.entity';
 import { UserMonthlyGivingUsage } from './entities/user-monthly-giving-usage.entity';
+import { AiService } from '../ai/ai.service';
 import { KudosController } from './kudos.controller';
 import { KudosService } from './kudos.service';
 import { PointsController } from './points.controller';
@@ -42,6 +43,7 @@ import { MonthlyGivingBudgetService } from './services/monthly-giving-budget.ser
     MonthlyGivingBudgetService,
     PointsService,
     KudosService,
+    AiService,
   ],
   exports: [TypeOrmModule, MonthlyGivingBudgetService, PointsService],
 })
