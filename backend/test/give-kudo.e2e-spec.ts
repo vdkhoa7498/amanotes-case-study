@@ -15,7 +15,7 @@ import { PointLedger } from '../src/kudos/entities/point-ledger.entity';
 class FakeEmailService {
   private readonly store = new Map<string, string>();
 
-  async sendOtp(to: string, _purpose: string, code: string): Promise<void> {
+  sendOtp(to: string, _purpose: string, code: string): void {
     this.store.set(to, code);
   }
 

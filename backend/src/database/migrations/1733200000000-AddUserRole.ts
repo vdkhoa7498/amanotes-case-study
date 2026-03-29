@@ -15,12 +15,12 @@ export class AddUserRole1733200000000 implements MigrationInterface {
     `);
 
     // 2. Seed default admin account (skip if already exists)
-    const existing = await queryRunner.query(
+    const existing: unknown[] = await queryRunner.query(
       `SELECT id FROM users WHERE email = $1 LIMIT 1`,
       [DEFAULT_ADMIN_EMAIL],
     );
 
-    if ((existing as unknown[]).length === 0) {
+    if (existing.length === 0) {
       const passwordHash = await bcrypt.hash(DEFAULT_ADMIN_PASSWORD, 10);
       await queryRunner.query(
         `INSERT INTO users
