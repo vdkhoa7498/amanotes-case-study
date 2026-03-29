@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/auth.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 import { UsersModule } from '../users/users.module';
 import { AttachedMedia } from './entities/attached-media.entity';
 import { CoreValue } from './entities/core-value.entity';
@@ -21,6 +22,7 @@ import { MonthlyGivingBudgetService } from './services/monthly-giving-budget.ser
 @Module({
   imports: [
     AuthModule,
+    NotificationsModule,
     UsersModule,
     TypeOrmModule.forFeature([
       CoreValue,

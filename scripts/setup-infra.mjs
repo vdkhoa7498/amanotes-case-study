@@ -45,9 +45,9 @@ copyIfMissing('.env.example', '.env')
 copyIfMissing('backend/.env.example', 'backend/.env')
 
 console.log(
-  '[setup-infra] (2/3) Docker: postgres + redis + minio (--wait healthcheck)…',
+  '[setup-infra] (2/3) Docker: postgres + redis + minio + mosquitto (--wait healthcheck)…',
 )
-run('docker', ['compose', 'up', '-d', '--wait', 'postgres', 'redis', 'minio'])
+run('docker', ['compose', 'up', '-d', '--wait', 'postgres', 'redis', 'minio', 'mosquitto'])
 
 if (skipMigration) {
   console.log('[setup-infra] Skipping migrations (--skip-migration).')

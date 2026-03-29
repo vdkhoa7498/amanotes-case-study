@@ -13,6 +13,9 @@ export type PointsSummary = {
   monthlyGivingSpent: number
   monthlyGivingRemaining: number
   monthlyGivingCap: number
+  kudosReceivedCount: number
+  rewardRedemptionsCount: number
+  uniqueShoutoutSenderCount: number
 }
 
 export type CoreValueRow = {
@@ -36,6 +39,7 @@ export type KudoFeedItem = {
     processingStatus: string
     durationSeconds: number | null
     sortOrder: number
+    url?: string
   }>
   reactions: Array<{
     id: string
@@ -54,6 +58,7 @@ export type KudoFeedItem = {
       mediaType: string
       processingStatus: string
       durationSeconds: number | null
+      url?: string
     }>
   }>
 }
@@ -70,4 +75,20 @@ export type CreateKudoPayload = {
   coreValueId: string
   description: string
   recipients: { userId: string; points: number }[]
+}
+
+/** Shout-out tới user hiện tại (API + socket). */
+export type KudoShoutoutPayload = {
+  type: 'kudo_received'
+  kudoId: string
+  points: number
+  sender: PublicUser
+  coreValue: { id: string; slug: string; name: string }
+  descriptionPreview: string
+  createdAt: string
+}
+
+export type ReceivedShoutoutsPage = {
+  items: KudoShoutoutPayload[]
+  nextCursor: string | null
 }

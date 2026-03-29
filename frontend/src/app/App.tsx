@@ -5,7 +5,10 @@ import { GoogleCallback } from '../features/auth/pages/GoogleCallback'
 import { Login } from '../features/auth/pages/Login'
 import { Register } from '../features/auth/pages/Register'
 import { ResetPassword } from '../features/auth/pages/ResetPassword'
-import { Home } from '../features/home/pages/Home'
+import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
+import { KudoDetailPage } from '../features/kudos/pages/KudoDetailPage'
+import { LiveKudosFeedPage } from '../features/kudos/pages/LiveKudosFeedPage'
+import { RewardsPage } from '../features/rewards/pages/RewardsPage'
 import { AppLayout } from '../shared/components/AppLayout'
 import { AuthLayout } from '../shared/components/AuthLayout'
 
@@ -26,7 +29,10 @@ export default function App() {
 
           <Route element={<RequireAuth />}>
             <Route element={<AppLayout />}>
-              <Route index element={<Home />} />
+              <Route index element={<DashboardPage />} />
+              <Route path="feed" element={<LiveKudosFeedPage />} />
+              <Route path="feed/:kudoId" element={<KudoDetailPage />} />
+              <Route path="rewards" element={<RewardsPage />} />
             </Route>
           </Route>
 

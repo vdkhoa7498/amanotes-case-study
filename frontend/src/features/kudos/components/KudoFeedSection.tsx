@@ -16,9 +16,11 @@ import 'dayjs/locale/vi'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { useMemo, useState } from 'react'
 import { queryKeys } from '../../../shared/lib/query-keys'
+import { sanitizeCommentBodyHtml } from '../../../shared/lib/sanitize-comment-body'
 import { userDisplayLabel } from '../../../shared/lib/user-display'
 import { fetchKudosFeed } from '../api/kudos-api'
 import type { KudoFeedItem, PublicUser } from '../types'
+import { KudoFeedPostBar } from './KudoFeedPostBar'
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi')
@@ -58,7 +60,13 @@ function reactionSummary(
   return [...map.entries()]
 }
 
-function FeedPost({ item }: { item: KudoFeedItem }) {
+function FeedPost({
+  item,
+  interactive = false,
+}: {
+  item: KudoFeedItem
+  interactive?: boolean
+}) {
   const reactionRows = reactionSummary(item.reactions)
 
   return (
@@ -117,11 +125,11 @@ function FeedPost({ item }: { item: KudoFeedItem }) {
           </Flex>
         ) : null}
 
-        {item.reactions.length > 0 || item.comments.length > 0 ? (
+        {item.reactions.length > 0 || item.comments.length > 0 || interactive ? (
           <Divider style={{ margin: '12px 0' }} />
         ) : null}
 
-        {item.reactions.length > 0 ? (
+        {!interactive && item.reactions.length > 0 ? (
           <Flex align="center" wrap gap={12}>
             <Space size={4} wrap>
               {reactionRows.map(([emoji, count]) => (
@@ -136,7 +144,7 @@ function FeedPost({ item }: { item: KudoFeedItem }) {
           </Flex>
         ) : null}
 
-        {item.comments.length > 0 ? (
+        {!interactive && item.comments.length > 0 ? (
           <>
             {item.reactions.length > 0 ? (
               <Divider style={{ margin: '8px 0' }} />
@@ -170,11 +178,12 @@ function FeedPost({ item }: { item: KudoFeedItem }) {
                         {dayjs(c.createdAt).fromNow()}
                       </Typography.Text>
                     </Flex>
-                    <Typography.Paragraph
-                      style={{ marginBottom: 0, fontSize: 15 }}
-                    >
-                      {c.body}
-                    </Typography.Paragraph>
+                    <div
+                      className="text-[15px] text-slate-200 [&_a]:text-violet-400 [&_p]:mb-2 [&_p:last-child]:mb-0 [&_img+img]:mt-2 [&_img]:my-1 [&_video]:my-1"
+                      dangerouslySetInnerHTML={{
+                        __html: sanitizeCommentBodyHtml(c.body),
+                      }}
+                    />
                     {c.media.length > 0 ? (
                       <Flex wrap gap={6} style={{ marginTop: 6 }}>
                         {c.media.map((m) => (
@@ -193,12 +202,26 @@ function FeedPost({ item }: { item: KudoFeedItem }) {
             </Flex>
           </>
         ) : null}
+
+        {interactive ? (
+          <KudoFeedPostBar
+            kudoId={item.id}
+            reactions={item.reactions}
+            commentCount={item.comments.length}
+          />
+        ) : null}
       </Flex>
     </Card>
   )
 }
 
-export function KudoFeedSection() {
+export function KudoFeedSection({
+  interactive = false,
+  title = 'Bảng tin kudos',
+}: {
+  interactive?: boolean
+  title?: string
+}) {
   const [scope, setScope] = useState<'me' | 'all'>('me')
 
   const {
@@ -229,7 +252,7 @@ export function KudoFeedSection() {
     <Flex vertical gap={16} style={columnStyle}>
       <Flex justify="space-between" align="center" wrap="wrap" gap={12}>
         <Typography.Title level={4} style={{ margin: 0 }}>
-          Bảng tin kudos
+          {title}
         </Typography.Title>
         <Radio.Group
           value={scope}
@@ -264,7 +287,9 @@ export function KudoFeedSection() {
       ) : null}
 
       {!isPending && !isError
-        ? items.map((kudo) => <FeedPost key={kudo.id} item={kudo} />)
+        ? items.map((kudo) => (
+            <FeedPost key={kudo.id} item={kudo} interactive={interactive} />
+          ))
         : null}
 
       {hasNextPage ? (

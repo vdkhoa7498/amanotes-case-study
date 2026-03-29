@@ -5,8 +5,8 @@
   "description": "Internal recognition & rewards – pnpm workspace (frontend + backend)",
   "scripts": {
     "setup:infra": "node scripts/setup-infra.mjs",
-    "infra:up": "docker compose up -d --wait postgres redis minio",
-    "infra:down": "docker compose stop postgres redis minio",
+    "infra:up": "docker compose up -d --wait postgres redis minio mosquitto",
+    "infra:down": "docker compose stop postgres redis minio mosquitto",
     "dev": "concurrently -n web,api -c cyan,magenta \"pnpm --filter frontend dev\" \"pnpm --filter backend start:dev\"",
     "dev:web": "pnpm --filter frontend dev",
     "dev:api": "pnpm --filter backend start:dev",

@@ -11,16 +11,26 @@ import { randomUUID } from 'node:crypto';
 import { AppException } from '../common/errors';
 import { ErrorCode } from '../common/errors/error-codes';
 
-const ALLOWED_MIME = new Set<string>([
+const AVATAR_MIME = new Set<string>([
   'image/jpeg',
   'image/png',
   'image/webp',
+]);
+
+const COMMENT_MEDIA_MIME = new Set<string>([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'video/mp4',
+  'video/webm',
 ]);
 
 const EXT_BY_MIME: Record<string, string> = {
   'image/jpeg': 'jpg',
   'image/png': 'png',
   'image/webp': 'webp',
+  'video/mp4': 'mp4',
+  'video/webm': 'webm',
 };
 
 @Injectable()
@@ -103,7 +113,7 @@ export class StorageService implements OnModuleInit {
         HttpStatus.SERVICE_UNAVAILABLE,
       );
     }
-    if (!ALLOWED_MIME.has(mimetype)) {
+    if (!AVATAR_MIME.has(mimetype)) {
       throw new AppException(
         ErrorCode.BAD_REQUEST,
         'Chỉ chấp nhận ảnh JPEG, PNG hoặc WebP.',
@@ -112,6 +122,40 @@ export class StorageService implements OnModuleInit {
     }
     const ext = EXT_BY_MIME[mimetype] ?? 'bin';
     const key = `register/${randomUUID()}.${ext}`;
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+        Body: buffer,
+        ContentType: mimetype,
+      }),
+    );
+    const base = this.publicBase.replace(/\/$/, '');
+    const url = `${base}/${this.bucket}/${key}`;
+    return { url, key };
+  }
+
+  /** Ảnh + video cho bình luận feed (JPEG/PNG/WebP, MP4/WebM). */
+  async uploadCommentMedia(
+    buffer: Buffer,
+    mimetype: string,
+  ): Promise<{ url: string; key: string }> {
+    if (!this.client || !this.configured) {
+      throw new AppException(
+        ErrorCode.SERVICE_UNAVAILABLE,
+        'Lưu trữ file chưa được cấu hình (S3/MinIO).',
+        HttpStatus.SERVICE_UNAVAILABLE,
+      );
+    }
+    if (!COMMENT_MEDIA_MIME.has(mimetype)) {
+      throw new AppException(
+        ErrorCode.BAD_REQUEST,
+        'Định dạng file không được hỗ trợ (ảnh JPEG/PNG/WebP hoặc video MP4/WebM).',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const ext = EXT_BY_MIME[mimetype] ?? 'bin';
+    const key = `comments/${randomUUID()}.${ext}`;
     await this.client.send(
       new PutObjectCommand({
         Bucket: this.bucket,

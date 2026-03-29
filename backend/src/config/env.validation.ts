@@ -45,4 +45,7 @@ export const envValidationSchema = Joi.object({
   S3_ACCESS_KEY: Joi.string().allow('').optional().default(''),
   S3_SECRET_KEY: Joi.string().allow('').optional().default(''),
   S3_BUCKET: Joi.string().min(1).optional().default('avatars'),
+
+  /** mqtt://host:1883 — empty disables MQTT shoutout pipeline (Socket.IO still runs). */
+  MQTT_URL: Joi.string().allow('').optional().default(''),
 }).unknown(true);

@@ -118,6 +118,9 @@ function getAccessTokenAfterRefresh(): Promise<string> {
 }
 
 rawApiClient.interceptors.request.use((config) => {
+  if (config.data instanceof FormData) {
+    delete config.headers['Content-Type']
+  }
   const { accessToken } = useAuthStore.getState()
   if (accessToken && !isPublicAuthPath(config.url)) {
     config.headers.Authorization = `Bearer ${accessToken}`

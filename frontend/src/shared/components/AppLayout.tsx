@@ -1,7 +1,21 @@
-import { Avatar, Dropdown, Flex, Layout as AntLayout, Typography } from 'antd'
-import { Link, Navigate, Outlet } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  Flex,
+  Layout as AntLayout,
+  Menu,
+  Typography,
+} from 'antd'
+import { useMemo, useState } from 'react'
+import { Link, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth, type AuthUser } from '../../features/auth'
+import { fetchPointsSummary } from '../../features/kudos/api/kudos-api'
+import { CreateKudoModal } from '../../features/kudos/components/CreateKudoModal'
 import { APP_BRAND_NAME } from '../constants/app'
+import { queryKeys } from '../lib/query-keys'
+import { NotificationBell } from './NotificationBell'
 
 const { Header, Content } = AntLayout
 
@@ -19,62 +33,113 @@ function userInitial(user: AuthUser): string {
 
 export function AppLayout() {
   const { user, logout } = useAuth()
+  const location = useLocation()
+  const [createOpen, setCreateOpen] = useState(false)
+
+  const { data: points } = useQuery({
+    queryKey: queryKeys.points.summary,
+    queryFn: fetchPointsSummary,
+    enabled: !!user,
+    staleTime: 15_000,
+  })
+
+  const menuKey = useMemo(() => {
+    if (location.pathname.startsWith('/feed')) return 'feed'
+    if (location.pathname.startsWith('/rewards')) return 'rewards'
+    return 'dash'
+  }, [location.pathname])
 
   if (!user) {
     return <Navigate to="/login" replace />
   }
 
+  const canSendKudo = (points?.monthlyGivingRemaining ?? 0) > 0
+
   return (
     <AntLayout className="min-h-screen !bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100">
-      <Header className="!flex !h-auto !items-center !border-b !border-slate-800/80 !bg-slate-950/85 !px-4 !py-3 !leading-normal backdrop-blur-sm">
+      <Header className="!h-auto !border-b !border-slate-800/80 !bg-slate-950/85 !px-4 !py-3 !leading-normal backdrop-blur-sm">
         <Flex
           align="center"
           justify="space-between"
-          gap="middle"
+          gap={16}
           wrap="wrap"
-          className="mx-auto w-full"
+          style={{ maxWidth: 1200, margin: '0 auto', width: '100%' }}
         >
-          <Link to="/" className="shrink-0">
-            <Typography.Title level={4} className="!mb-0 !text-violet-400">
-              {APP_BRAND_NAME}
-            </Typography.Title>
-          </Link>
-
-          <Dropdown
-            trigger={['click']}
-            placement="bottomRight"
-            menu={{
-              items: [
+          <Flex align="center" gap={20} wrap="wrap" style={{ minWidth: 0 }}>
+            <Link to="/">
+              <Typography.Title level={4} className="!mb-0 !text-violet-400">
+                {APP_BRAND_NAME}
+              </Typography.Title>
+            </Link>
+            <Menu
+              mode="horizontal"
+              theme="dark"
+              selectedKeys={[menuKey]}
+              style={{
+                flex: 1,
+                minWidth: 200,
+                border: 'none',
+                background: 'transparent',
+              }}
+              items={[
+                { key: 'dash', label: <Link to="/">Dashboard</Link> },
+                { key: 'feed', label: <Link to="/feed">Live Kudos Feed</Link> },
                 {
-                  key: 'logout',
-                  label: 'Đăng xuất',
-                  danger: true,
-                  onClick: () => logout(),
+                  key: 'rewards',
+                  label: <Link to="/rewards">Reward Redemption</Link>,
                 },
-              ],
-            }}
-          >
-            <button
-              type="button"
-              className="flex cursor-pointer items-center gap-3 rounded-lg border-0 bg-transparent py-1 pr-2 pl-1 text-left text-slate-100 transition-colors hover:bg-slate-800/60"
+              ]}
+            />
+          </Flex>
+
+          <Flex align="center" gap={12} wrap="wrap">
+            <Button
+              type="primary"
+              disabled={!canSendKudo}
+              onClick={() => setCreateOpen(true)}
             >
-              <Avatar
-                src={user.avatar || undefined}
-                size={40}
-                className="shrink-0 border border-slate-700 bg-violet-600 font-medium text-white"
+              Gửi kudo
+            </Button>
+            <NotificationBell />
+
+            <Dropdown
+              trigger={['click']}
+              placement="bottomRight"
+              menu={{
+                items: [
+                  {
+                    key: 'logout',
+                    label: 'Đăng xuất',
+                    danger: true,
+                    onClick: () => logout(),
+                  },
+                ],
+              }}
+            >
+              <button
+                type="button"
+                className="flex cursor-pointer items-center gap-3 rounded-lg border-0 bg-transparent py-1 pr-2 pl-1 text-left text-slate-100 transition-colors hover:bg-slate-800/60"
               >
-                {userInitial(user)}
-              </Avatar>
-              <span className="max-w-[160px] truncate text-sm font-medium sm:max-w-[220px]">
-                {userDisplayName(user)}
-              </span>
-            </button>
-          </Dropdown>
+                <Avatar
+                  src={user.avatar || undefined}
+                  size={40}
+                  className="shrink-0 border border-slate-700 bg-violet-600 font-medium text-white"
+                >
+                  {userInitial(user)}
+                </Avatar>
+                <span className="max-w-[140px] truncate text-sm font-medium sm:max-w-[200px]">
+                  {userDisplayName(user)}
+                </span>
+              </button>
+            </Dropdown>
+          </Flex>
         </Flex>
       </Header>
       <Content className="mx-auto w-full max-w-5xl px-4 py-10">
         <Outlet />
       </Content>
+
+      <CreateKudoModal open={createOpen} onClose={() => setCreateOpen(false)} />
     </AntLayout>
   )
 }

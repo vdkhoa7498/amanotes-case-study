@@ -8,6 +8,11 @@ export const queryKeys = {
   kudos: {
     coreValues: ['kudos', 'core-values'] as const,
     feed: (scope: 'me' | 'all') => ['kudos', 'feed', scope] as const,
+    rankingMonthly: ['kudos', 'ranking', 'monthly'] as const,
+    detail: (kudoId: string) => ['kudos', 'detail', kudoId] as const,
+  },
+  rewards: {
+    catalog: ['rewards', 'catalog'] as const,
   },
   users: {
     directory: ['users', 'directory'] as const,
