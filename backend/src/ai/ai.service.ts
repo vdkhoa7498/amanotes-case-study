@@ -162,13 +162,13 @@ Chỉ trả về nội dung tóm tắt, không kèm tiêu đề hay giải thíc
       .sort((a, b) => a.index - b.index)
       .map((e) => e.embedding);
 
-    const queryVec = vectors[0]!;
+    const queryVec = vectors[0];
     const kudoVecs = vectors.slice(1);
 
     // Cosine similarity (vectors from text-embedding-3-small are already unit-length)
     const scored = kudos.map((kudo, i) => ({
       kudo,
-      score: cosineSimilarity(queryVec, kudoVecs[i]!),
+      score: cosineSimilarity(queryVec, kudoVecs[i]),
     }));
 
     scored.sort((a, b) => b.score - a.score);
@@ -198,9 +198,9 @@ function cosineSimilarity(a: number[], b: number[]): number {
   let normA = 0;
   let normB = 0;
   for (let i = 0; i < a.length; i++) {
-    dot += a[i]! * b[i]!;
-    normA += a[i]! * a[i]!;
-    normB += b[i]! * b[i]!;
+    dot += a[i] * b[i];
+    normA += a[i] * a[i];
+    normB += b[i] * b[i];
   }
   const denom = Math.sqrt(normA) * Math.sqrt(normB);
   return denom === 0 ? 0 : dot / denom;

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
@@ -97,7 +97,7 @@ describe('Give Kudo — e2e integration', () => {
     );
     await app.init();
 
-    http = app.getHttpServer() as App;
+    http = app.getHttpServer();
     dataSource = module.get(DataSource);
 
     // Ensure all migrations have run (idempotent — skips already-applied ones).
