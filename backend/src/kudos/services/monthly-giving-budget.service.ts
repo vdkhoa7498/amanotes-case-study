@@ -12,7 +12,7 @@ function pgUpdateReturningRows<T extends Record<string, unknown>>(
   if (!Array.isArray(result) || result.length === 0) {
     return [];
   }
-  const head = result[0];
+  const head: unknown = result[0];
   if (Array.isArray(head)) {
     return head as T[];
   }
@@ -72,7 +72,7 @@ export class MonthlyGivingBudgetService {
       [userId, ym],
     );
 
-    const updateResult = await manager.query(
+    const updateResult: unknown = await manager.query(
       `UPDATE user_monthly_giving_usage AS u
        SET points_spent = u.points_spent + $1,
            version = u.version + 1,

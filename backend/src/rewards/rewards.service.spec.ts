@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-function-type, @typescript-eslint/require-await */
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { RewardsService } from './rewards.service';
@@ -324,8 +325,8 @@ describe('RewardsService', () => {
 
       await service.redeem(USER_ID, { rewardItemId: ITEM_ID });
 
-      const ledgerCreate = (mgr.create as jest.Mock).mock.calls.find(
-        ([_cls, data]) => typeof data?.amount === 'number' && data.amount < 0,
+      const ledgerCreate = mgr.create.mock.calls.find(
+        ([, data]) => typeof data?.amount === 'number' && data.amount < 0,
       );
       expect(ledgerCreate).toBeDefined();
       expect(ledgerCreate![1].amount).toBe(-500);

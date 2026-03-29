@@ -201,6 +201,7 @@ export function KudoDetailPage() {
       quillRef.current = null
       host.innerHTML = ''
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, q.data?.id, kudoId, processFiles])
 
   const data = q.data

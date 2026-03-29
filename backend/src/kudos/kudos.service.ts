@@ -461,7 +461,7 @@ export class KudosService {
        GROUP BY kr.user_id
        ORDER BY points DESC`,
       [startIso, endExclusiveIso, KudoStatus.READY],
-    ));
+    )) as unknown as Array<{ userId: string; points: string }>;
     const userIds = rows.map((r) => r.userId);
     const userList = await this.users.findByIds(userIds);
     const byId = new Map(userList.map((u) => [u.id, u]));

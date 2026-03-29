@@ -64,7 +64,7 @@ export function CreateKudoModal({ open, onClose }: Props) {
   const totalSelectedPoints = useMemo(
     () =>
       (recipientsWatch ?? []).reduce(
-        (s, r) => s + (Number(r?.points) ?? 0),
+        (s, r) => s + Number(r?.points ?? 0),
         0,
       ),
     [recipientsWatch],
