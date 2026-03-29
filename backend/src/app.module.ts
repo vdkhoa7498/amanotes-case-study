@@ -9,7 +9,9 @@ import { AppService } from './app.service';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { AuthModule } from './auth/auth.module';
 import { envValidationSchema } from './config/env.validation';
+import { KudosModule } from './kudos/kudos.module';
 import { RedisModule } from './redis/redis.module';
+import { RewardsModule } from './rewards/rewards.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { UsersModule } from './users/users.module';
 
@@ -45,6 +47,8 @@ import { UsersModule } from './users/users.module';
     }),
     RedisModule,
     UsersModule,
+    RewardsModule,
+    KudosModule,
     AuthModule,
     UploadsModule,
   ],
