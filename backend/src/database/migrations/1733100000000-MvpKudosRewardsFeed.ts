@@ -260,9 +260,10 @@ export class MvpKudosRewardsFeed1733100000000 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-      INSERT INTO reward_catalog_items (title, description, points_cost, sort_order) VALUES
-        ('Company Hoodie', 'Áo hoodie công ty', 500, 10),
-        ('Friday Afternoon Off', 'Nghỉ buổi chiều thứ Sáu', 1000, 20)
+      INSERT INTO reward_catalog_items (title, description, points_cost, stock, sort_order) VALUES
+        ('1 ly nước', '1 ly nước bất kỳ tại tiệm trà sữa', 500, 10, 1),
+        ('Áo hoodie công ty', 'Áo hoodie công ty', 500, 10, 2),
+        ('Nghỉ buổi chiều thứ Sáu', 'Nghỉ buổi chiều thứ Sáu', 1000, 10, 3)
     `);
   }
 
@@ -270,7 +271,9 @@ export class MvpKudosRewardsFeed1733100000000 implements MigrationInterface {
     await queryRunner.query(
       `DROP TRIGGER IF EXISTS trg_kudo_recipients_not_sender ON kudo_recipients`,
     );
-    await queryRunner.query(`DROP FUNCTION IF EXISTS tf_kudo_recipients_not_sender()`);
+    await queryRunner.query(
+      `DROP FUNCTION IF EXISTS tf_kudo_recipients_not_sender()`,
+    );
     await queryRunner.query(
       `DROP TRIGGER IF EXISTS trg_point_ledger_kudo_balance ON point_ledger`,
     );

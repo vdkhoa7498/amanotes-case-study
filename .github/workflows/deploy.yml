@@ -1,0 +1,88 @@
+name: Deploy
+
+on:
+  push:
+    branches: [master, main]
+
+# Only run one deploy at a time; cancel any in-progress deploy on the same branch.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─────────────────────────────────────────────────
+  # Re-run CI before deploying (keeps deploy.yml DRY;
+  # use "needs" so deploy is skipped if CI fails).
+  # ─────────────────────────────────────────────────
+  ci-backend:
+    name: Backend (lint + test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --filter backend
+      - run: pnpm --filter backend exec tsc --noEmit
+      - run: pnpm --filter backend run lint
+      - run: pnpm --filter backend run test --no-coverage
+
+  ci-frontend:
+    name: Frontend (lint + build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --filter frontend
+      - run: pnpm --filter frontend run lint
+      - run: pnpm --filter frontend run build
+        env:
+          VITE_API_URL: http://localhost:7770
+
+  # ─────────────────────────────────────────────────
+  # Deploy to Ubuntu server via SSH
+  # ─────────────────────────────────────────────────
+  deploy:
+    name: Deploy to server
+    runs-on: ubuntu-latest
+    needs: [ci-backend, ci-frontend]
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -e
+            cd ${{ secrets.DEPLOY_PATH }}
+
+            echo "→ Pulling latest code..."
+            git pull origin master
+
+            echo "→ Building production images..."
+            docker compose -f docker-compose.prod.yml build --no-cache
+
+            echo "→ Starting services (migrations run automatically via TYPEORM_MIGRATIONS_RUN=true)..."
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+
+            echo "→ Waiting for backend to be healthy..."
+            sleep 10
+            docker compose -f docker-compose.prod.yml ps backend
+
+            echo "→ Removing unused images..."
+            docker image prune -f
+
+            echo "✓ Deploy complete."

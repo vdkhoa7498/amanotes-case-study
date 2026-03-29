@@ -1,5 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { App, Button, Card, Flex, Image, List, Skeleton, Typography } from 'antd'
+import {
+  App,
+  Button,
+  Card,
+  Flex,
+  Image,
+  List,
+  Skeleton,
+  Typography,
+} from 'antd'
 import { queryKeys } from '../../../shared/lib/query-keys'
 import { fetchPointsSummary } from '../../kudos/api/kudos-api'
 import { fetchRewardsCatalog, redeemReward } from '../api/rewards-api'
@@ -8,7 +17,12 @@ export function RewardsPage() {
   const { message } = App.useApp()
   const queryClient = useQueryClient()
 
-  const { data: catalog = [], isPending, isError, error } = useQuery({
+  const {
+    data: catalog = [],
+    isPending,
+    isError,
+    error,
+  } = useQuery({
     queryKey: queryKeys.rewards.catalog,
     queryFn: fetchRewardsCatalog,
   })
@@ -27,10 +41,14 @@ export function RewardsPage() {
     },
     onSuccess: (res) => {
       message.success(
-        res.idempotent ? 'Yêu cầu đổi đã được ghi nhận trước đó.' : 'Đã gửi yêu cầu đổi thưởng.',
+        res.idempotent
+          ? 'Yêu cầu đổi đã được ghi nhận trước đó.'
+          : 'Đã gửi yêu cầu đổi thưởng.',
       )
       void queryClient.invalidateQueries({ queryKey: queryKeys.points.summary })
-      void queryClient.invalidateQueries({ queryKey: queryKeys.rewards.catalog })
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.rewards.catalog,
+      })
     },
     onError: (e: Error) => {
       message.error(e.message || 'Không đổi được thưởng.')
@@ -64,18 +82,29 @@ export function RewardsPage() {
               extra={
                 <Typography.Text strong>{item.pointsCost} điểm</Typography.Text>
               }
+              style={{ height: 200, width: 300 }}
             >
               {item.imageUrl ? (
                 <Image
                   src={item.imageUrl}
                   alt=""
-                  style={{ maxHeight: 160, objectFit: 'cover', marginBottom: 8 }}
+                  style={{
+                    maxHeight: 160,
+                    objectFit: 'cover',
+                    marginBottom: 8,
+                  }}
                 />
               ) : null}
-              <Typography.Paragraph type="secondary" style={{ marginBottom: 12 }}>
+              <Typography.Paragraph
+                type="secondary"
+                style={{ marginBottom: 12 }}
+              >
                 {item.description ?? '—'}
               </Typography.Paragraph>
-              <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 8 }}>
+              <Typography.Text
+                type="secondary"
+                style={{ display: 'block', marginBottom: 8 }}
+              >
                 {item.stock === null ? 'Còn hàng' : `Còn lại: ${item.stock}`}
               </Typography.Text>
               <Button

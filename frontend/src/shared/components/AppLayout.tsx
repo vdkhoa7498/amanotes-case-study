@@ -65,7 +65,7 @@ export function AppLayout() {
           wrap="wrap"
           style={{ maxWidth: 1200, margin: '0 auto', width: '100%' }}
         >
-          <Flex align="center" gap={20} wrap="wrap" style={{ minWidth: 0 }}>
+          <Flex align="center" gap={20} wrap="wrap" flex={1}>
             <Link to="/">
               <Typography.Title level={4} className="!mb-0 !text-violet-400">
                 {APP_BRAND_NAME}

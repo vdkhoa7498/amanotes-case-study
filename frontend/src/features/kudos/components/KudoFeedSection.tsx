@@ -125,9 +125,7 @@ function FeedPost({
           </Flex>
         ) : null}
 
-        {item.reactions.length > 0 || item.comments.length > 0 || interactive ? (
-          <Divider style={{ margin: '12px 0' }} />
-        ) : null}
+        <div className="h-4" />
 
         {!interactive && item.reactions.length > 0 ? (
           <Flex align="center" wrap gap={12}>
@@ -147,7 +145,7 @@ function FeedPost({
         {!interactive && item.comments.length > 0 ? (
           <>
             {item.reactions.length > 0 ? (
-              <Divider style={{ margin: '8px 0' }} />
+              <Divider style={{ margin: 8 }} />
             ) : null}
             <Typography.Text
               type="secondary"
