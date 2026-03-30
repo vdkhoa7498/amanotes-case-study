@@ -1,7 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import {
   Avatar,
-  Button,
   Card,
   Divider,
   Empty,
@@ -9,13 +8,15 @@ import {
   Radio,
   Skeleton,
   Space,
+  Spin,
   Tag,
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
 import 'dayjs/locale/vi'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useAuth } from '../../auth'
 import { queryKeys } from '../../../shared/lib/query-keys'
 import { sanitizeCommentBodyHtml } from '../../../shared/lib/sanitize-comment-body'
 import { userDisplayLabel } from '../../../shared/lib/user-display'
@@ -221,7 +222,10 @@ export function KudoFeedSection({
   interactive?: boolean
   title?: string
 }) {
-  const [scope, setScope] = useState<'me' | 'all'>('me')
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'admin'
+  const [scope, setScope] = useState<'me' | 'all'>(isAdmin ? 'all' : 'me')
+  const sentinelRef = useRef<HTMLDivElement>(null)
 
   const {
     data,
@@ -242,6 +246,21 @@ export function KudoFeedSection({
 
   const items = useMemo(() => data?.pages.flatMap((p) => p.data) ?? [], [data])
 
+  useEffect(() => {
+    const el = sentinelRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          void fetchNextPage()
+        }
+      },
+      { rootMargin: '200px' },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
   const columnStyle = {
     width: '100%',
     marginInline: 'auto' as const,
@@ -253,16 +272,18 @@ export function KudoFeedSection({
         <Typography.Title level={4} style={{ margin: 0 }}>
           {title}
         </Typography.Title>
-        <Radio.Group
-          value={scope}
-          onChange={(e) => setScope(e.target.value)}
-          optionType="button"
-          buttonStyle="solid"
-          options={[
-            { label: 'Của tôi', value: 'me' },
-            { label: 'Tất cả', value: 'all' },
-          ]}
-        />
+        {!isAdmin && (
+          <Radio.Group
+            value={scope}
+            onChange={(e) => setScope(e.target.value)}
+            optionType="button"
+            buttonStyle="solid"
+            options={[
+              { label: 'Của tôi', value: 'me' },
+              { label: 'Tất cả', value: 'all' },
+            ]}
+          />
+        )}
       </Flex>
 
       {isPending ? (
@@ -295,16 +316,11 @@ export function KudoFeedSection({
           ))
         : null}
 
-      {hasNextPage ? (
-        <Button
-          type="default"
-          block
-          size="large"
-          loading={isFetchingNextPage}
-          onClick={() => fetchNextPage()}
-        >
-          Tải thêm bài viết
-        </Button>
+      <div ref={sentinelRef} style={{ height: 1 }} />
+      {isFetchingNextPage ? (
+        <Flex justify="center" style={{ padding: '16px 0' }}>
+          <Spin />
+        </Flex>
       ) : null}
     </Flex>
   )

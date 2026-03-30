@@ -49,10 +49,10 @@ export class UsersService {
     return this.users.save(user);
   }
 
-  /** Colleague picker for kudos (excludes current user). */
+  /** Colleague picker for kudos (excludes current user, staff only). */
   listDirectoryExcluding(excludeUserId: string): Promise<User[]> {
     return this.users.find({
-      where: { id: Not(excludeUserId) },
+      where: { id: Not(excludeUserId), role: 'staff' },
       order: { fullName: 'ASC', email: 'ASC' },
       take: 300,
       select: {

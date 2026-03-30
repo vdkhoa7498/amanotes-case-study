@@ -207,7 +207,7 @@ export function KudoDetailPage() {
   const data = q.data
 
   return (
-    <div className="pb-[340px]">
+    <div className={user?.role !== 'admin' ? 'pb-[340px]' : ''}>
       <Flex vertical gap={16}>
         <Link
           to="/feed"
@@ -397,7 +397,7 @@ export function KudoDetailPage() {
         ) : null}
       </Flex>
 
-      {user && data ? (
+      {user && user.role !== 'admin' && data ? (
         <div className="fixed right-0 bottom-0 left-0 z-20 border-t border-slate-700/80 bg-slate-950/95 px-4 py-4 backdrop-blur-md">
           <div className="relative mx-auto w-full max-w-3xl">
             <div

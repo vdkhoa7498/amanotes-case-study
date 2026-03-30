@@ -82,6 +82,47 @@ export function KudoFeedPostBar({
 
   const busy = setReactionMut.isPending || removeReactionMut.isPending
 
+  if (user?.role === 'admin') {
+    return (
+      <Flex
+        align="center"
+        className="border-slate-700/80 mt-3 border-t pt-2"
+        justify="space-between"
+        gap={12}
+        wrap="wrap"
+      >
+        {reactionRows.length > 0 ? (
+          <Space size={6} wrap className="text-[15px] leading-none">
+            {reactionRows.map(([emoji, count]) => (
+              <span key={emoji} className="inline-flex items-baseline gap-1 whitespace-nowrap">
+                <span>{emoji}</span>
+                <Typography.Text type="secondary" className="text-xs">
+                  {count}
+                </Typography.Text>
+              </span>
+            ))}
+          </Space>
+        ) : <span />}
+        <Button
+          type="text"
+          className="!text-slate-400 flex shrink-0 items-center gap-2 !px-2"
+          onClick={() => {
+            if (onCommentClick) onCommentClick()
+            else void navigate(`/feed/${kudoId}`)
+          }}
+        >
+          <CommentOutlined className="text-lg" />
+          <span className="text-sm font-medium">Bình luận</span>
+          {commentCount > 0 ? (
+            <Typography.Text type="secondary" className="text-xs">
+              {commentCount}
+            </Typography.Text>
+          ) : null}
+        </Button>
+      </Flex>
+    )
+  }
+
   const openPicker = () => {
     if (leaveTimerRef.current) clearTimeout(leaveTimerRef.current)
     setPickerOpen(true)

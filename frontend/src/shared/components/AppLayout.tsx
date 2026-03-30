@@ -106,14 +106,16 @@ export function AppLayout() {
 
           <Flex align="center" gap={12} wrap="wrap">
             <KudosSearchModal />
-            <Button
-              type="primary"
-              disabled={!canSendKudo}
-              onClick={() => setCreateOpen(true)}
-            >
-              Gửi kudo
-            </Button>
-            <NotificationBell />
+            {user.role !== 'admin' && (
+              <Button
+                type="primary"
+                disabled={!canSendKudo}
+                onClick={() => setCreateOpen(true)}
+              >
+                Gửi kudo
+              </Button>
+            )}
+            {user.role !== 'admin' && <NotificationBell />}
 
             <Dropdown
               trigger={['click']}
