@@ -157,7 +157,7 @@ export function RewardCatalogAdminPage() {
           </Form.Item>
           <Flex gap={16}>
             <Form.Item name="pointsCost" label="Điểm đổi" rules={[{ required: true }]} style={{ flex: 1 }}>
-              <InputNumber min={1} style={{ width: '100%' }} />
+              <InputNumber min={0} style={{ width: '100%' }} />
             </Form.Item>
             <Form.Item name="stock" label="Tồn kho (trống = vô hạn)" style={{ flex: 1 }}>
               <InputNumber min={0} style={{ width: '100%' }} placeholder="Vô hạn" />

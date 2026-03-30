@@ -38,6 +38,10 @@ export class AuthService {
     return code.trim();
   }
 
+  private isTestAccount(email: string): boolean {
+    return email.endsWith('@goodjob.local');
+  }
+
   async register(dto: RegisterDto): Promise<{ message: string }> {
     const email = this.normalizeEmail(dto.email);
     const employeeCode = this.normalizeEmployeeCode(dto.employeeCode);
@@ -71,7 +75,9 @@ export class AuthService {
     });
     const otp = this.otpService.generateCode();
     await this.otpService.saveOtp('register', email, otp);
-    await this.emailService.sendOtp(email, 'Xác thực đăng ký', otp);
+    if (!this.isTestAccount(email)) {
+      await this.emailService.sendOtp(email, 'Xác thực đăng ký', otp);
+    }
 
     return { message: 'Đã gửi OTP tới email. Vui lòng kiểm tra hộp thư.' };
   }
@@ -137,7 +143,9 @@ export class AuthService {
 
     const otp = this.otpService.generateCode();
     await this.otpService.saveOtp('login', email, otp);
-    await this.emailService.sendOtp(email, 'Xác thực đăng nhập', otp);
+    if (!this.isTestAccount(email)) {
+      await this.emailService.sendOtp(email, 'Xác thực đăng nhập', otp);
+    }
 
     return { message: 'Đã gửi OTP tới email. Nhập mã để hoàn tất đăng nhập.' };
   }
@@ -183,7 +191,9 @@ export class AuthService {
 
     const otp = this.otpService.generateCode();
     await this.otpService.saveOtp('reset', email, otp);
-    await this.emailService.sendOtp(email, 'Đặt lại mật khẩu', otp);
+    if (!this.isTestAccount(email)) {
+      await this.emailService.sendOtp(email, 'Đặt lại mật khẩu', otp);
+    }
 
     return { message: 'Đã gửi OTP tới email.' };
   }

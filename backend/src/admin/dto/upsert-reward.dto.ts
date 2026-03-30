@@ -21,7 +21,7 @@ export class UpsertRewardDto {
   description?: string | null;
 
   @IsInt()
-  @Min(1)
+  @Min(0)
   pointsCost: number;
 
   @IsOptional()
