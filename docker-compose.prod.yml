@@ -76,6 +76,8 @@ services:
       S3_SECRET_KEY: ${S3_SECRET_KEY}
       S3_BUCKET: ${S3_BUCKET:-avatars}
       MQTT_URL: ${MQTT_URL:-mqtt://mosquitto:1883}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OTP_MASTER_CODE: ${OTP_MASTER_CODE:-}
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_USER: ${SMTP_USER:-}
