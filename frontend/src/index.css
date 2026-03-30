@@ -39,26 +39,31 @@ body {
   background-color: rgb(2 6 23);
 }
 
-/* ── Glassmorphism — Cards ───────────────────────────────────────────────────── */
+/* ── Glassmorphism — CSS custom properties (prevents minifier mangling) ─────── */
+:root {
+  --glass-blur-card:     blur(16px) saturate(1.5);
+  --glass-blur-modal:    blur(28px) saturate(1.8);
+  --glass-blur-dropdown: blur(20px) saturate(1.6);
+  --glass-blur-drawer:   blur(24px) saturate(1.6);
+}
+
+/* ── Cards ───────────────────────────────────────────────────────────────────── */
 .ant-card {
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: var(--glass-blur-card);
+  backdrop-filter: var(--glass-blur-card);
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
   border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-/* ── Glassmorphism — Modals ─────────────────────────────────────────────────── */
-/* Use direct class (no parent prefix) — AntD v5 portals render at body root */
-/* AntD v5: move backdrop-filter to .ant-modal (the animated element) so the
-   blur fades in naturally alongside the opacity animation — no flash, no jerk. */
+/* ── Modals ──────────────────────────────────────────────────────────────────── */
+/* blur on .ant-modal (animated element) so it fades in with the opacity animation */
 .ant-modal-root .ant-modal {
-  backdrop-filter: blur(28px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+  -webkit-backdrop-filter: var(--glass-blur-modal) !important;
+  backdrop-filter: var(--glass-blur-modal) !important;
 }
 
-/* .ant-modal-container holds background, border, shadow — no blur here */
 .ant-modal-container {
   background: rgba(8, 14, 40, 0.28) !important;
   border: 1px solid rgba(255, 255, 255, 0.10) !important;
@@ -71,27 +76,26 @@ body {
   background: transparent !important;
 }
 
-
-/* Drawer — same glass treatment */
+/* ── Drawer ──────────────────────────────────────────────────────────────────── */
 .ant-drawer-content {
-  backdrop-filter: blur(24px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: var(--glass-blur-drawer) !important;
+  backdrop-filter: var(--glass-blur-drawer) !important;
   background: rgba(8, 14, 40, 0.70) !important;
   border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
-/* ── Glassmorphism — Dropdowns & Selects ────────────────────────────────────── */
+/* ── Dropdowns & Selects ─────────────────────────────────────────────────────── */
 .ant-dropdown .ant-dropdown-menu,
 .ant-select-dropdown,
 .ant-picker-dropdown .ant-picker-panel-container {
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: var(--glass-blur-dropdown);
+  backdrop-filter: var(--glass-blur-dropdown);
   background: rgba(8, 14, 40, 0.80) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* ── Glassmorphism — Table ──────────────────────────────────────────────────── */
+/* ── Table ───────────────────────────────────────────────────────────────────── */
 .ant-table-wrapper .ant-table {
   background: transparent !important;
 }
@@ -110,11 +114,11 @@ body {
   background: rgba(255, 255, 255, 0.04) !important;
 }
 
-/* ── Glassmorphism — Notification / Popover ─────────────────────────────────── */
+/* ── Notification / Popover ──────────────────────────────────────────────────── */
 .ant-notification-notice,
 .ant-popover .ant-popover-inner {
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: var(--glass-blur-dropdown);
+  backdrop-filter: var(--glass-blur-dropdown);
   background: rgba(8, 14, 40, 0.80) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
