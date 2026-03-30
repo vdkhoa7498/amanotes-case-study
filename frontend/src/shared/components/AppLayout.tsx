@@ -93,10 +93,9 @@ export function AppLayout() {
               items={[
                 { key: 'dash', label: <Link to="/">Dashboard</Link> },
                 { key: 'feed', label: <Link to="/feed">Live Kudos Feed</Link> },
-                {
-                  key: 'rewards',
-                  label: <Link to="/rewards">Reward Redemption</Link>,
-                },
+                ...(user.role !== 'admin'
+                  ? [{ key: 'rewards', label: <Link to="/rewards">Reward Redemption</Link> }]
+                  : []),
                 ...(user.role === 'admin'
                   ? [{ key: 'admin', label: <Link to="/admin">⚙️ Admin</Link> }]
                   : []),

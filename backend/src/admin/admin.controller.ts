@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -35,7 +36,9 @@ export class AdminController {
 
   @Get('rewards')
   listRewards() {
-    return this.rewardsRepo.find({ order: { sortOrder: 'ASC', createdAt: 'DESC' } });
+    return this.rewardsRepo.find({
+      order: { sortOrder: 'ASC', createdAt: 'DESC' },
+    });
   }
 
   @Post('rewards')
@@ -65,14 +68,26 @@ export class AdminController {
   async deleteReward(@Param('id', ParseUUIDPipe) id: string) {
     const item = await this.rewardsRepo.findOne({ where: { id } });
     if (!item) throw new NotFoundException('Không tìm thấy phần thưởng');
-    await this.rewardsRepo.remove(item);
+    try {
+      await this.rewardsRepo.remove(item);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : '';
+      if (msg.includes('reward_redemptions_reward_item_id_fkey')) {
+        throw new BadRequestException(
+          'Không thể xoá phần thưởng này vì đã có người đổi thưởng.',
+        );
+      }
+      throw err;
+    }
   }
 
   // ── Core Values ────────────────────────────────────────────────────────────
 
   @Get('core-values')
   listCoreValues() {
-    return this.coreValuesRepo.find({ order: { sortOrder: 'ASC', createdAt: 'ASC' } });
+    return this.coreValuesRepo.find({
+      order: { sortOrder: 'ASC', createdAt: 'ASC' },
+    });
   }
 
   @Post('core-values')
@@ -101,6 +116,16 @@ export class AdminController {
   async deleteCoreValue(@Param('id', ParseUUIDPipe) id: string) {
     const cv = await this.coreValuesRepo.findOne({ where: { id } });
     if (!cv) throw new NotFoundException('Không tìm thấy core value');
-    await this.coreValuesRepo.remove(cv);
+    try {
+      await this.coreValuesRepo.remove(cv);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : '';
+      if (msg.includes('kudos_core_value_id_fkey')) {
+        throw new BadRequestException(
+          'Không thể xoá giá trị cốt lõi này vì đã có kudo sử dụng.',
+        );
+      }
+      throw err;
+    }
   }
 }
